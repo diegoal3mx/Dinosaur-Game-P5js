@@ -1,13 +1,4 @@
-//import java.util.Iterator;
-
 class Game {
-    ground;
-    moon;
-    player;
-    cactae;
-    birds;
-    clouds;
-    stars;
     last_bird_x = 1350;
     speed = 12; 
     maxSpeed = 20;
@@ -16,8 +7,6 @@ class Game {
     last_day_change = 1;
     window_width = 1280;
     night = false;
-    started = false;
-    debug = false;
     collisionBoxesVisible = false;
     fpsVisible = false;
     sprite;
@@ -39,72 +28,72 @@ class Game {
 
     update(){
         if(this.player.isAlive() && this.started){
-            if(parseInt(score)%1000==0 && parseInt(score)>last_day_change){
-                last_day_change = parseInt(score);
-                night=!night;
-                if(night){
-                    moon.changePhase();
+            if(Math.floor(this.score)%1000==0 && Math.floor(this.score)>this.last_day_change){
+                this.last_day_change = Math.floor(this.score);
+                this.night=!this.night;
+                if(this.night){
+                    this.moon.changePhase();
                 }
             }
-            this.score += 1*(speed/70);
-            this.ground.update(parseInt(speed));
+            this.score += 1*(this.speed/70);
+            this.ground.update(Math.floor(this.speed));
             this.player.update();
 
-            if(player.will_die){
-                player.die();
+            if(this.player.will_die){
+                this.player.die();
             }
 
-            for (cl in clouds){
-                cl.update(parseInt(speed*0.5));
+            for (let cl of this.clouds){
+                cl.update(Math.floor(this.speed*0.5));
             }
 
-            for (c in cactae){
-                c.update(parseInt(speed));
-                for (cbc in c.collisionBoxes){
-                    cbc.update(parseInt(speed));
+            for (let c of this.cactae){
+                c.update(Math.floor(this.speed));
+                for (let cbc of c.collisionBoxes){
+                    cbc.update(Math.floor(this.speed));
                 }
             }
 
-            for (b in birds){
-                b.update(parseInt(speed));
-                for (cbb in b.wingDownCollisionBoxes){
-                    cbb.update(parseInt(speed));
+            for (let b of this.birds){
+                b.update(Math.floor(this.speed));
+                for (let cbb of b.wingDownCollisionBoxes){
+                    cbb.update(Math.floor(this.speed));
                 }
-                for (cbb in b.wingUpCollisionBoxes){
-                    cbb.update(parseInt(speed));
+                for (let cbb of b.wingUpCollisionBoxes){
+                    cbb.update(Math.floor(this.speed));
                 }
             }
 
-            if(night){
+            if(this.night){
                 fill(255);
-                moon.update((speed*0.021));
-                for (s in stars){
-                    s.update((speed*0.021));
+                this.moon.update((this.speed*0.021));
+                for (let s of this.stars){
+                    s.update((this.speed*0.021));
                 }
             }
             else{
                 fill(32, 33, 36);
             }
-            text("Score",width/2+100,50);
-            text(parseInt(score,width/2+200,50));    
+            text("Score",width/2+90,50);
+            text(Math.floor(this.score),width/2+190,50);
 
-            if(highScore < score){
-                highScore = parseInt(score);
+            if(this.highScore < this.score){
+                this.highScore = Math.floor(this.score);
             }
 
             text("High Score",width/2+280,50);
-            text(highScore,width/2+460,50);
+            text(this.highScore,width/2+460,50);
 
-            if(!player.will_die){
-                check_collisions();
+            if(!this.player.will_die){
+                this.check_collisions();
             }
 
-            if(speed<maxSpeed){
-                speed += 0.001;
+            if(this.speed<this.maxSpeed){
+                this.speed += 0.001;
             }
         }
         else{
-            this.started=false;
+            this.started = false;
             this.player.doInitialJump();
             textSize(32);
             fill(32, 33, 36);
@@ -113,7 +102,7 @@ class Game {
 
         if(this.fpsVisible){
             text("Fps",50,50);
-            text(frameRate,100,50);
+            text(Math.floor(frameRate()),120,50);
         }
     }
 
@@ -121,7 +110,7 @@ class Game {
         if(this.started){
             this.ground.display();
             if(this.night){
-                for (s in this.stars){
+                for (let s of this.stars){
                     s.display();
                 }
                 this.moon.display();
@@ -130,28 +119,28 @@ class Game {
         else{
             this.ground.displayGameNotStarted();
         }
-        for (cl in this.clouds){
-            this.cl.display();
+        for (let cl of this.clouds){
+            cl.display();
         }
-        for (c in this.cactae){
+        for (let c of this.cactae){
             c.display();
-            if(collisionBoxesVisible){
-                for (cbc in c.collisionBoxes){
+            if(this.collisionBoxesVisible){
+                for (let cbc of c.collisionBoxes){
                     cbc.display();
                 }
             }
         }
-        for (b in this.birds){
+        for (let b of this.birds){
             b.display();
-            if(collisionBoxesVisible){
-                for (cbb in b.activeCollisionBoxes){
+            if(this.collisionBoxesVisible){
+                for (let cbb of b.activeCollisionBoxes){
                     cbb.display();
                 }
             }
         }
         this.player.display();
         if(this.collisionBoxesVisible){
-            for (cbp in this.player.activeCollisionBoxes){
+            for (let cbp of this.player.activeCollisionBoxes){
                 cbp.display();
             }
         } 
@@ -159,7 +148,6 @@ class Game {
 
     load_game(w){
         this.set_window_width(w);
-        this.load_game_sprite();
         this.load_game_assets();
         this.load_ground_assets();
         this.load_player_assets();
@@ -169,9 +157,6 @@ class Game {
         this.ground.w = w;
         this.ground.x2 = 0-w;
         this.moon.x = w+70;
-    }
-    load_game_sprite(){
-        this.sprite =  loadImage("../imgs/dinosaur-sprite.png");
     }
     load_game_assets(){
         this.imgGameOver =  this.sprite.get(655, 15, 191, 11);
@@ -196,89 +181,68 @@ class Game {
     }
 
     spawn_enemy(){
-        if(parseInt( random (10)==0)){
-            if(score>450){
-                birds.add(new Bird());
+        if(Math.floor(random(10))==0){
+            if(this.score>450){
+                this.birds.push(new Bird());
             }
         }
         else{
-            cactae.add(new Cactus());
+            this.cactae.push(new Cactus());
         }
     }
 
     spawn_cloud(){
-        if(parseInt( random (1.5)==0)){
-            clouds.add(new Cloud());
+        if(Math.floor(random(1.5))==0){
+            this.clouds.push(new Cloud());
         }
     }
 
     spawn_star(){
-        if(parseInt( random (10)==0)){
-            stars.add(new Star());
+        if(Math.floor(random(10))==0){
+            this.stars.push(new Star());
         }
     }
 
     spawn_entities(){
-        spawn_enemy();
-        spawn_cloud();
-        if(night){
-            spawn_star();
+        this.spawn_enemy();
+        this.spawn_cloud();
+        if(this.night){
+            this.spawn_star();
         }
     }
 
-    despawn_enemy(){
-        for (let iterator = cactae.iterator(); iterator.hasNext();) {
-            c = iterator.next();
-            if(c.x+c.w<0) {
-                iterator.remove();
-            }
-        }
-
-        for (let iterator = birds.iterator(); iterator.hasNext();) {
-            b = iterator.next();
-            if(b.x+b.w<0) {
-                iterator.remove();
-            }
-        }
+    despawn_enemy() {
+        this.cactae = this.cactae.filter(c => c.x + c.w >= 0);
+        this.birds = this.birds.filter(b => b.x + b.w >= 0);
     }
-
+      
     despawn_cloud(){
-        for (let iterator = clouds.iterator(); iterator.hasNext();) {
-            cl = iterator.next();
-            if(cl.x+cl.w<0) {
-                iterator.remove();
-            }
-        }
+        this.clouds = this.clouds.filter(cl => cl.x + cl.w >= 0);
     }
 
     despawn_star(){
-        for (let iterator = stars.iterator(); iterator.hasNext();) {
-            s = iterator.next();
-            if(s.x+s.w<0) {
-                iterator.remove();
-            }
-        }
+        this.stars = this.stars.filter(s => s.x + s.w >= 0);
     }
 
     despawn_entities(){
-        despawn_enemy();
-        despawn_cloud();
-        if(night){
-            despawn_star();
+        this.despawn_enemy();
+        this.despawn_cloud();
+        if(this.night){
+            this.despawn_star();
         }
     }
 
     check_collisions(){
         loopCollisions:
-        for (cbp in this.player.activeCollisionBoxes){
+        for (let cbp of this.player.activeCollisionBoxes){
             let p_x = cbp.x;
             let p_y = cbp.y;
             let p_w = cbp.w;
             let p_h = cbp.h;
             
-            for (c in cactae){
+            for (let c of this.cactae){
 
-                for(cbc in c.collisionBoxes){
+                for(let cbc of c.collisionBoxes){
 
                     if(p_x + p_w > cbc.x && p_x < cbc.x + cbc.w){
                 
@@ -303,19 +267,19 @@ class Game {
             }
 
             if(this.player.isJumping()){
-                for (let i = 0; i<birds.size(); i++){
-                    if(birds.get(0).x+birds.get(0).w<200 && birds.size()>1){
-                        last_bird_x = birds.get(1).x;
+                for (let i = 0; i<this.birds.length; i++){
+                    if(this.birds[0].x+this.birds[0].w<200 && this.birds.length>1){
+                        this.last_bird_x = this.birds[1].x;
                     }
                     else{
-                        last_bird_x = birds.get(0).x;
+                        this.last_bird_x = this.birds[0].x;
                     }
                 }
             }
             
-            for (b in birds){
+            for (let b of this.birds){
 
-                for(cbb in b.activeCollisionBoxes){
+                for(let cbb of b.activeCollisionBoxes){
 
                     if(p_x + p_w > cbb.x && p_x < cbb.x + cbb.w){
                
@@ -330,19 +294,19 @@ class Game {
         }
     }
 
-     check_collisions_crouch(){
-        if(score<30){
+    check_collisions_crouch(){
+        if(this.score<30){
             this.player.stop_jump();
         }
         else{
             let e_y = 0;
             loopCactus:
-            for (c in cactae){
+            for (let c of this.cactae){
                 if(!this.player.will_die){
-                    for(cbc in c.collisionBoxes){
-                        if(this.player.x + this.player.w > cbc.x-speed && this.player.x < cbc.x-speed + cbc.w){
-                            this.player.will_die=true;
-                            e_y=cbc.y;
+                    for(let cbc of c.collisionBoxes){
+                        if(this.player.x + this.player.w > cbc.x-this.speed && this.player.x < cbc.x-this.speed + cbc.w){
+                            this.player.will_die = true;
+                            e_y = cbc.y;
                             break;
                         }
                     }
@@ -386,13 +350,13 @@ class Game {
                 } 
             }
             loopBirds:
-            for (b in birds){
+            for (let b of this.birds){
                 if(!this.player.will_die){
-                    for(cbb in b.activeCollisionBoxes){
-                        if(this.player.x + this.player.w > cbb.x-speed && this.player.x < cbb.x-speed + cbb.w){
-                            if(this.player.last_jump_y < cbb.y  && this.player.x+this.player.w>last_bird_x ){
-                                this.player.will_die=true;
-                                e_y=cbb.y+10; break;
+                    for(let cbb of b.activeCollisionBoxes){
+                        if(this.player.x + this.player.w > cbb.x-this.speed && this.player.x < cbb.x-this.speed + cbb.w){
+                            if(this.player.last_jump_y < cbb.y  && this.player.x+this.player.w>this.last_bird_x ){
+                                this.player.will_die = true;
+                                e_y = cbb.y+10; break;
                             }
                         }
                     }
@@ -414,12 +378,12 @@ class Game {
     }
 
     getHighScore(){
-        return highScore;
+        return this.highScore;
     }
 
     toggle_debug(){
-        this.debug = !debug;
-        set_debug();
+        this.debug = !this.debug;
+        this.set_debug();
     }
 
     set_debug(){
@@ -428,26 +392,26 @@ class Game {
     }
 
     keyPressed(key){
-        if (key == "UP" && this.player.isAlive() && started){
+        if (key == "UP" && this.player.isAlive() && this.started){
             if (!this.player.isCrouching()){
                 this.player.jump();
             }
         }
-        else if (key == "DOWN" && this.player.isAlive() && started){
+        else if (key == "DOWN" && this.player.isAlive() && this.started){
             if(this.player.isJumping()){
                 this.player.stop_jumping = true;
-                check_collisions_crouch();
+                this.check_collisions_crouch();
             }else{
                 this.player.crouch();
             }
         }
         else if (key == "D"){
-            toggle_debug();
+            this.toggle_debug();
         }
     }
 
     keyReleased(key){
-        if (key == "DOWN" && this.player.isAlive() && started){
+        if (key == "DOWN" && this.player.isAlive() && this.started){
             this.player.stop_crouch();
         }
     } 

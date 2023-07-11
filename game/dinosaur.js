@@ -1,28 +1,36 @@
 class Dinosaur {
-    x; w; y; h; last_jump_y; img_index; img_crouching_index;
-    jumping; crouching; living; stop_jumping; will_die;
-    jump_stage;
-    img; img_running_1; img_running_2; img_running_3; img_crouching_1; img_crouching_2; img_die; img_die_night;
-    imgs = [3];
-    crouching_imgs = [2];
-    xPositionOfCollisionBoxes = [2,12,12,16,20,20,37,28,39];
-    yPositionOfCollisionBoxes = [30,42,52,60,67,72,72,30,4];
-    collisionBoxes = [];
-    activeCollisionBoxes = [];
-    crouchCollisionBoxes = [];
-
-    Dinosaur(){
-        x = 200;
-        y = 450;
-        w = 80;
-        h = 86;
-        jumping = false;
-        living = true;
-        jump_stage = 0;
-        crouching = false;
-        createCollisionBoxes();
-        createCrouchCollisionBoxes();
-        activeCollisionBoxes=collisionBoxes;
+    constructor(){
+        this.x = 200;
+        this.w = 80;
+        this.y = 450;
+        this.h = 86;
+        this.last_jump_y = 0;
+        this.img_index = 0;
+        this.img_crouching_index = 0;
+        this.jumping = false;
+        this.crouching = false;
+        this.living = true;
+        this.stop_jumping = false;
+        this.will_die = false;
+        this.jump_stage = 0;
+        this.img;
+        this.img_running_1;
+        this.img_running_2;
+        this.img_running_3;
+        this.img_crouching_1;
+        this.img_crouching_2;
+        this.img_die;
+        this.img_die_night;
+        this.imgs = [];
+        this.crouching_imgs = [];
+        this.xPositionOfCollisionBoxes = [2, 12, 12, 16, 20, 20, 37, 28, 39];
+        this.yPositionOfCollisionBoxes = [30, 42, 52, 60, 67, 72, 72, 30, 4];
+        this.collisionBoxes = [];
+        this.activeCollisionBoxes;
+        this.crouchCollisionBoxes = [];
+        this.createCollisionBoxes();
+        this.createCrouchCollisionBoxes();
+        this.activeCollisionBoxes = this.collisionBoxes;
     }
 
     f(x){
@@ -30,41 +38,41 @@ class Dinosaur {
     }
 
     update(){ 
-        if(jumping){ 
-            y=448-parseInt(f(jump_stage));
-            jump_stage += 0.03;
-            last_jump_y = y;
-            img = img_running_1;
+        if(this.jumping){ 
+            this.y=448-Math.floor(this.f(this.jump_stage));
+            this.jump_stage += 0.03;
+            this.last_jump_y = this.y;
+            this.img = this.img_running_1;
          
-            if(jump_stage>1){
-                jumping = false;
-                jump_stage = 0;
-                y = 450;
+            if(this.jump_stage>1){
+                this.jumping = false;
+                this.jump_stage = 0;
+                this.y = 450;
             }
         }
-        else if(crouching){
-            if(frameCount%10==0 && !will_die){
-                img = crouching_imgs[img_crouching_index ^= 1];
+        else if(this.crouching){
+            if(frameCount%10==0 && !this.will_die){
+                this.img = this.crouching_imgs[this.img_crouching_index ^= 1];
             }
         }
         else{ 
             if(frameCount%10==0){
-                img_index++;
-                if(img_index==3){
-                    img_index = 0;
+                this.img_index++;
+                if(this.img_index==3){
+                    this.img_index = 0;
                 }
-                img = imgs[img_index];
+                this.img = this.imgs[this.img_index];
             }
         }
-        updateYCollisionBoxes();
+        this.updateYCollisionBoxes();
     }
 
     doInitialJump(){
         if(this.jumping){
-            this.y=448-parseInt(f(jump_stage));
+            this.y=448-Math.floor(this.f(this.jump_stage));
             this.jump_stage += 0.03;
-            this.last_jump_y = y;
-            this.img = img_running_1;
+            this.last_jump_y = this.y;
+            this.img = this.img_running_1;
          
             if(this.jump_stage>1){
                 this.jumping = false;
@@ -76,125 +84,125 @@ class Dinosaur {
     }
 
     jump(){
-        jumping = true;
+        this.jumping = true;
     }
 
     die(... enemy_height){ 
-        living = false;
+        this.living = false;
 
         if(game.night){
             image(game.imgGameOverNight, ((game.window_width/2)-174), 350, 347, 20);
-            img = img_die_night;
+            this.img = this.img_die_night;
         }
         else{
             image(game.imgGameOver, ((game.window_width/2)-174), 350, 347, 20);
-            img = img_die;
+            this.img = this.img_die;
         }
         
-        if(isCrouching() && isStoppingJumping()){
-            stop_crouch();
+        if(this.isCrouching() && this.isStoppingJumping()){
+            this.stop_crouch();
         }
-        else if (isCrouching()){
-            stop_crouch();
-            x+=30;
+        else if (this.isCrouching()){
+            this.stop_crouch();
+            this.x+=30;
         }
     
-        eh = (enemy_height.length >= 1) ? enemy_height[0] : null;
+        let eh = (enemy_height.length >= 1) ? enemy_height[0] : null;
          
         if(eh != null){
-           y = eh-(h-5);
+           this.y = eh-(this.h-5);
         }
-        w = 80;
-        h = 86;
-        activeCollisionBoxes = collisionBoxes;
-        updateXYCollisionBoxes();
+        this.w = 80;
+        this.h = 86;
+        this.activeCollisionBoxes = this.collisionBoxes;
+        this.updateXYCollisionBoxes();
         noLoop();
     }
 
     stop_jump(... stop_jump_enemy_height){
 
-        eh = (stop_jump_enemy_height.length >= 1) ? stop_jump_enemy_height[0] : null;
+        let eh = (stop_jump_enemy_height.length >= 1) ? stop_jump_enemy_height[0] : null;
          
         if(eh != null){
-           y = eh-(h-5);
+           this.y = eh-(this.h-5);
         }
         else{
-            y = 450;
+            this.y = 450;
         }
 
-        jumping = false;
-        jump_stage = 0;
-        crouch();
+        this.jumping = false;
+        this.jump_stage = 0;
+        this.crouch();
     }
 
     crouch(){
         
-        if(y<=450 && !will_die && living){
-        crouching = true;
-        activeCollisionBoxes = crouchCollisionBoxes;
-        y += 34;
-        w = 110;
-        h = 52;
+        if(this.y<=450 && !this.will_die && this.living){
+            this.crouching = true;
+            this.activeCollisionBoxes = this.crouchCollisionBoxes;
+            this.y += 34;
+            this.w = 110;
+            this.h = 52;
         }
-        else if (y<=450){
-            crouching = true;
+        else if (this.y<=450){
+            this.crouching = true;
         }
 
-        updateCrouchingImage();
+        this.updateCrouchingImage();
 
     }
     
     updateCrouchingImage(){
-        if(will_die){
-            img = img_die;
+        if(this.will_die){
+            this.img = this.img_die;
         }
         else{
-            img = crouching_imgs[img_crouching_index];
+            this.img = this.crouching_imgs[this.img_crouching_index];
         }
     }
 
     stop_crouch(){
     
-        if(y>450){
-            crouching = false;
-            stop_jumping = false;
-            activeCollisionBoxes = collisionBoxes;
-            y -= 34;
-            w = 80;
-            h = 86;
+        if(this.y>450){
+            this.crouching = false;
+            this.stop_jumping = false;
+            this.activeCollisionBoxes = this.collisionBoxes;
+            this.y -= 34;
+            this.w = 80;
+            this.h = 86;
         }
        
-        if(living){
-            img = imgs[img_index];
+        if(this.living){
+            this.img = this.imgs[this.img_index];
         }
 
-        updateYCollisionBoxes();
+        this.updateYCollisionBoxes();
  
     }
     
     createCollisionBoxes(){
-        for (b in new CollisionBox(6,0).getCollisionBoxes()){
-            collisionBoxes.add(b);
+        for (let b of new CollisionBox(6,0).getCollisionBoxes()){
+            this.collisionBoxes.push(b);
         } 
     }
 
     createCrouchCollisionBoxes(){
-        for (b in new CollisionBox(7,0).getCollisionBoxes()){
-            crouchCollisionBoxes.add(b);
+        for (let b of new CollisionBox(7,0).getCollisionBoxes()){
+            this.crouchCollisionBoxes.push(b);
         } 
     }
 
     updateYCollisionBoxes(){
-        for (let i=0; i<collisionBoxes.size();i++){
-            collisionBoxes.get(i).y=y+yPositionOfCollisionBoxes[i];
+        for (let i=0; i<this.collisionBoxes.length;i++){
+            this.collisionBoxes[i].y=this.y+this.yPositionOfCollisionBoxes[i];
         }
     }
 
     updateXYCollisionBoxes(){
-        for (let i=0; i<collisionBoxes.size();i++){
-            collisionBoxes.get(i).x=x+xPositionOfCollisionBoxes[i];
+        for (let i=0; i<this.collisionBoxes.length;i++){
+            this.collisionBoxes[i].x=this.x+this.xPositionOfCollisionBoxes[i];
         }
-        updateYCollisionBoxes();
+        this.updateYCollisionBoxes();
     }
 
     display(){

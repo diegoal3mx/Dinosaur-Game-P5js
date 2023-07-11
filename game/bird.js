@@ -1,68 +1,65 @@
 class Bird{
 
-    x; y; w; h; img_index;
-    img_wing_down; img_wing_up;
-    imgs = [2];
-    collisionBoxes = [2];
-    activeCollisionBoxes;
-    wingUpCollisionBoxes = [];
-    wingDownCollisionBoxes = [];
-
-    Bird(){
-        let randomDistance = parseInt(random (40,80));
-        x = game.window_width+randomDistance;
-        w = 84;
-        h = 75;
-        img_index = 0;
-        img_wing_down = game.sprite.get(134, 2, 46, 40);
-        img_wing_up = game.sprite.get(180, 2, 46, 40);
-        imgs [0] = img_wing_down; imgs[1] = img_wing_up;
+    constructor(){
+        this.randomDistance = Math.floor(random (40,80));
+        this.x = game.window_width + this.randomDistance;
+        this.w = 84;
+        this.h = 75;
+        this.img_index = 0;
+        this.imgs = [];
+        this.collisionBoxes = [];
+        this.wingUpCollisionBoxes = [];
+        this.wingDownCollisionBoxes = [];
+        this.img_wing_down = game.sprite.get(134, 2, 46, 40);
+        this.img_wing_up = game.sprite.get(180, 2, 46, 40);
+        this.imgs [0] = this.img_wing_down; this.imgs[1] = this.img_wing_up;
         
-        let type = parseInt(random(4));
+        this.type = Math.floor(random(4));
 
-        switch (type) {
+        switch (this.type) {
             case 0:
-                y = 385;
+                this.y = 385;
             break;
             case 1:
-                y = 439;
+                this.y = 439;
             break;
             case 2:
-                y = parseInt(random (100,390));
+                this.y = Math.floor(random(100,390));
             break;
             case 3:
-                y = parseInt(random (100,390));
+                this.y = Math.floor(random(100,390));
             break;
         }
 
-        createWingUpCollisionBoxes(randomDistance-70);
-        createWingDownCollisionBoxes(randomDistance-70);
-        collisionBoxes[0]=wingDownCollisionBoxes;collisionBoxes[1]=wingUpCollisionBoxes;
-        activeCollisionBoxes=collisionBoxes[0];
+        this.createWingUpCollisionBoxes(this.randomDistance-70);
+        this.createWingDownCollisionBoxes(this.randomDistance-70);
+        this.collisionBoxes[0] = this.wingDownCollisionBoxes;
+        this.collisionBoxes[1] = this.wingUpCollisionBoxes;
+        this.activeCollisionBoxes = this.collisionBoxes[0];
     }
 
     update(speed){
-        x -= parseInt(speed);
+        this.x -= speed;
       
         if(frameCount%10==0){
-            image(imgs[img_index ^= 1], x, y, w, h);
-            activeCollisionBoxes=collisionBoxes[img_index];
+            image(this.imgs[this.img_index ^= 1], this.x, this.y, this.w, this.h);
+            this.activeCollisionBoxes = this.collisionBoxes[this.img_index];
         }
     }
 
     createWingDownCollisionBoxes(distanceOffset){
-        for (b in new CollisionBox(8,distanceOffset,y).getCollisionBoxes()){
-            wingDownCollisionBoxes.add(b);
+        for (let b of new CollisionBox(8,distanceOffset,this.y).getCollisionBoxes()){
+            this.wingDownCollisionBoxes.push(b);
         } 
     }
 
     createWingUpCollisionBoxes(distanceOffset){
-        for (b in new CollisionBox(9,distanceOffset,y).getCollisionBoxes()){
-            wingUpCollisionBoxes.add(b);
+        for (let b of new CollisionBox(9,distanceOffset,this.y).getCollisionBoxes()){
+            this.wingUpCollisionBoxes.push(b);
         } 
     }
 
     display(){
-        image(imgs[img_index], x, y, w, h);
+        image(this.imgs[this.img_index], this.x, this.y, this.w, this.h);
     }
 }

@@ -1,88 +1,93 @@
 var game = new Game(false, false);
 
 var every_sec = 0;
-var restartFromSpaceKeyEnabled=true;
+var restartFromSpaceKeyEnabled = true;
+let img;
 
-function settings() {
-    createCanvas((int)(displayWidth*(2.0/3.0)),(int)(displayHeight*(2.0/3.0)));
+function preload() {
+  this.img = loadImage("../imgs/dinosaur-sprite.png");
+  this.game.sprite = this.img;
 }
 
 function setup(){
-    frameRate(60);
-    start();
+  createCanvas((displayWidth+(displayWidth*(1/3))),720);
+  frameRate(60);
+  start();
 }
 
 function start(){
-    game.load_game(width);
-    loop();
+  this.game.load_game(width);
+  loop();
 }
 
 function restart(){
-    let tempScore = game.getHighScore();
-    let tempDebug = game.debug;
-    game = new Game(true, tempDebug);
-    game.highScore=tempScore;
-    start();
+  let tempScore = this.game.getHighScore();
+  let tempDebug = this.game.debug;
+  this.game = new Game(true, tempDebug);
+  this.game.highScore = tempScore;
+  this.game.sprite = this.img;
+  start();
 }
 
 function draw(){
-    if(game.night){
-        background(32,33,36);
-    }
-    else{
-        background(255);
-    }
-    game.update();
-    game.display(); 
+  checkIfKeyIsPressed();
+  if(this.game.night){
+    background(32,33,36);
+  }
+  else{
+    background(255);
+  }
+  this.game.update();
+  this.game.display();
 
-    if(game.started){
-        game.despawn_entities();
-        if(millis() - every_sec > 1000 && game.score>=30){
-            every_sec = millis();
-            game.spawn_entities();
-        }
+  if(this.game.started){
+    this.game.despawn_entities();
+    if(millis() - this.every_sec > 1000 && this.game.score>=30){
+      this.every_sec = millis();
+      this.game.spawn_entities();
     }
+  }
 
 }
 
-function keyPressed(){
-    if(key == CODED){
-        if (keyCode == UP){
-            game.keyPressed("UP");
-        }
-        else if (keyCode == DOWN){
-            game.keyPressed("DOWN");
-        }
+function checkIfKeyIsPressed(){
+  if (keyIsPressed) {
+    if (key === "ArrowUp") {
+      this.game.keyPressed("UP");
     }
-    else if (key == ' '){
-        if(!game.player.isAlive() && restartFromSpaceKeyEnabled){
-            delay(200);
-            restart();
-        }
-        else if (game.player.isAlive() && game.started){
-            game.keyPressed("UP");
-            restartFromSpaceKeyEnabled=false;
-        }
-        else{
-            game.player.jump();
-        }
+    else if (key === "ArrowDown") {
+      this.game.keyPressed("DOWN");
     }
-    else if (key == 'D' || key == 'd'){
-        game.keyPressed("D");
+    else if (key === " ") {
+      if (!this.game.player.isAlive() && this.restartFromSpaceKeyEnabled) {
+        setTimeout(() => {
+          restart();
+        }, 200);
+      } 
+      else if (this.game.player.isAlive() && this.game.started) {
+        this.game.keyPressed("UP");
+        this.restartFromSpaceKeyEnabled = false;
+      } 
+      else {
+        this.game.player.jump();
+      }
+    } 
+    else if (key === "D" || key === "d") {
+      this.game.keyPressed("D");
     }
+  }
 }
-
+  
 function keyReleased() {
-    if(key == CODED){
-        if (keyCode == DOWN){
-            game.keyReleased("DOWN");
-        }
+  if (key === "ArrowDown") {
+    this.game.keyReleased("DOWN");
+  } 
+  else if (key === " ") {
+    this.restartFromSpaceKeyEnabled = true;
+    if (!this.game.player.isAlive()) {
+      setTimeout(() => {
+        restart();
+      }, 200);
     }
-    else if (key == ' '){
-        restartFromSpaceKeyEnabled=true;
-        if(!game.player.isAlive()){
-            delay(200);
-            restart();
-        }
-    }
+  }
 }

@@ -1,23 +1,21 @@
 class Moon{
 
-    x;
-    y; w; h; phase;
     img;
 
-    Moon(){
-        x = 1350;
-        y = 150;
-        w = 37;
-        h = 75;
-        phase = 0;
+    constructor(){
+        this.x = 1350;
+        this.y = 150;
+        this.w = 37;
+        this.h = 75;
+        this.phase = 0;
     }
 
     update(speed){
         this.x -= parseFloat(speed);
     }
     changePhase(){
-        this.x = game.window_width+70;
-        switch (phase) {
+        this.x = game.window_width + 70;
+        switch (this.phase) {
             case 0:
                 this.img = game.sprite.get(484, 2, 20, 40);
             break;
