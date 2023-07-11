@@ -74,8 +74,8 @@ class Game {
             else{
                 fill(32, 33, 36);
             }
-            text("Score",width/2+90,50);
-            text(Math.floor(this.score),width/2+190,50);
+            text("Score",width/2+50,50);
+            text(Math.floor(this.score),width/2+150,50);
 
             if(this.highScore < this.score){
                 this.highScore = Math.floor(this.score);
@@ -102,7 +102,7 @@ class Game {
 
         if(this.fpsVisible){
             text("Fps",50,50);
-            text(Math.floor(frameRate()),120,50);
+            text(parseFloat(frameRate()).toFixed(3),120,50);
         }
     }
 

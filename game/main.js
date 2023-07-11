@@ -71,10 +71,13 @@ function checkIfKeyIsPressed(){
       else {
         this.game.player.jump();
       }
-    } 
-    else if (key === "D" || key === "d") {
-      this.game.keyPressed("D");
     }
+  }
+}
+
+function keyPressed(){
+  if (key === "D" || key === "d") {
+    this.game.keyPressed("D");
   }
 }
   
